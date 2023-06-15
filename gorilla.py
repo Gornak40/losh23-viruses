@@ -1,7 +1,8 @@
 #!venv/bin/python
-# from click import command, argument, option
-# from click.types import Path, File
+from click import command, argument, option
+from click.types import Path, File
 from subprocess import Popen, PIPE
+import subprocess
 import os
 from time import time
 
@@ -13,11 +14,13 @@ class Field:
 
 	def post(self, popen, player_id=None):
 		print(self.n, self.m, self.k, file=popen.stdin)
-		print(self.n, self.m, self.k)
+		popen.stdin.flush()
 		if player_id is not None:
 			print(player_id, file=popen.stdin)
+			popen.stdin.flush()
 		for line in self.A:
 			print(*line, file=popen.stdin)
+			popen.stdin.flush()
 
 	def make_move(self, move):
 		for i in range(move[1]):
@@ -25,21 +28,20 @@ class Field:
 			self.A[x][y] = move[0] if self.A[x][y] == 0 else -move[0]
 
 
-# @command(help='Gorilla interactor.')
-# @argument('player1', type=Path(dir_okay=False, exists=True))
-# @argument('player2', type=Path(dir_okay=False, exists=True))
-# @argument('val', type=Path(dir_okay=False, exists=True))
-# @argument('test', type=File())
-# @option('--time-limit', '-t', type=int, help='Time limit for each player (seconds).', default=3)
+@command(help='Gorilla interactor.')
+@argument('player1', type=Path(dir_okay=False, exists=True))
+@argument('player2', type=Path(dir_okay=False, exists=True))
+@argument('val', type=Path(dir_okay=False, exists=True))
+@argument('test', type=File())
+@option('--time-limit', '-t', type=int, help='Time limit for each player (seconds).', default=3)
 class Main:
-	def __init__(self, player1='roma', player2='roma', val='val', test=open('test.in'), time_limit=None):
+	def __init__(self, player1, player2, val, test, time_limit):
 		self.time_limit = time_limit
-		self.popen1 = Popen([os.path.join('.', player1)], stdin=PIPE, stdout=PIPE, universal_newlines=True)
-		self.popen2 = Popen([os.path.join('.', player2)], stdin=PIPE, stdout=PIPE, universal_newlines=True)
-		self.val = Popen([os.path.join('.', val)], stdin=PIPE, stdout=PIPE, universal_newlines=True)
+		self.popen1 = subprocess.Popen([os.path.join('.', player1)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+		self.popen2 = subprocess.Popen([os.path.join('.', player2)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+		self.val = subprocess.Popen([os.path.join('.', val)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
 		self.field = Field(test)
-		print(3, 4, 5, file=self.val.stdin)
-	#	self.mainloop()
+		self.mainloop()
 
 	def mainloop(self):
 		self.field.post(self.val)
@@ -52,7 +54,9 @@ class Main:
 		player_id = 1
 		while True:
 			print('r', file=p1.stdin)
+			self.popen1.stdin.flush()
 			print(*move, file=p1.stdin)
+			self.popen1.stdin.flush()
 			move = self.make_moves(p1, player_id)
 			p1, p2 = p2, p1
 			player_id = 3 - 1
@@ -64,10 +68,12 @@ class Main:
 	def endgame(self, player_id):
 		print(f'Player {player_id} wins')
 		print('o', file=self.popen1.stdin)
+		self.popen1.stdin.flush()
 		print('o', file=self.popen2.stdin)
-		self.popen1.kill()
-		self.popen2.kill()
-		self.val.kill()
+		self.popen2.stdin.flush()
+		self.popen1.terminate()
+		self.popen2.terminate()
+		self.val.terminate()
 		exit(0)
 
 	def make_moves(self, popen, player_id):
@@ -83,6 +89,7 @@ class Main:
 			if len(arr[2:]) != arr[1]:
 				raise ValueError
 			print(*arr, file=self.val.stdin)
+			self.val.flush()
 			status = list(map(int, self.val.stdout.readline().strip().split()))
 			if status[0] != 0:
 				self.endgame(status[0])

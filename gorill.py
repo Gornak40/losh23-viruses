@@ -48,8 +48,10 @@ class Gorill:
 
 	def endgame(self, player_id):
 		print(f'Player {player_id} wins')
-		print('o', file=self.popen1.stdin, flush=True)
-		print('o', file=self.popen2.stdin, flush=True)
+		with open('result.out', 'w') as file:
+			print(player_id, file=file)
+	#	print('o', file=self.popen1.stdin, flush=True)
+	#	print('o', file=self.popen2.stdin, flush=True)
 		self.popen1.terminate()
 		self.popen2.terminate()
 		self.val.terminate()

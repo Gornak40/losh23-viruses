@@ -11,6 +11,7 @@ int n, m, k, timer;
 int A[MAXN][MAXM], used[MAXN][MAXN];
 
 void out(int pl) {
+//	cerr << "SUGOMUS " << pl << endl;
 	cout << pl << endl;
 	exit(0);
 }
@@ -62,12 +63,12 @@ int hard(int pl) {
 	int pl_score = 0, op_score = 0;
 	for (int x = 0; x < n; ++x)
 		for (int y = 0; y < m; ++y) {
-			if (abs(A[x][y]) == pl) ++pl_score;
-			else if (abs(A[x][y]) == 3 - pl) ++op_score;
+			if (used[x][y] == timer) ++op_score;
+			else if (abs(A[x][y]) == pl) ++pl_score;
 		}
 	// ALERT
-	cerr << pl_score << ',' << op_score << endl;
-	return (pl_score >= op_score ? pl : 3 - pl);
+//	cerr << pl_score << ',' << op_score << endl;
+	return (pl_score <= op_score ? pl : 3 - pl);
 }
 
 int main() {
@@ -77,17 +78,19 @@ int main() {
 			cin >> A[x][y];
 	while (true) {
 		int pl, k; cin >> pl >> k;
+	//	cerr << ": " << pl << ' ' << k << endl;
 		if (!k) out(hard(3 - pl));
 		for (int i = 0; i < k; ++i) {
 			int x, y; cin >> x >> y, --x, --y;
 			if (!make_move(pl, x, y)) out(3 - pl);
-			cout << 0 << endl;
 		}
+		cout << 0 << endl;
+		/*
 		for (int x = 0; x < n; ++x) {
 			for (int y = 0; y < m; ++y)
 				cerr << A[x][y] << ' ';
 			cerr << endl;
 		}
-		cerr << endl;
+		cerr << endl;*/
 	}
 }

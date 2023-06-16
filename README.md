@@ -1,7 +1,7 @@
 # losh23-viruses
 
 ```bash
-g++ val.cpp -o val
+g++ val.cpp -O3 -march=native -o val
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt

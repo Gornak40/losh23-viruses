@@ -13,7 +13,6 @@ roma.cpp
 result.out
 results.json
 blacklist.txt
-test1.in
 test_solutions/*
 
 # C extensions

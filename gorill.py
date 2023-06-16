@@ -30,12 +30,13 @@ class Field:
 @argument('val', type=Path(dir_okay=False, exists=True))
 @argument('test', type=File())
 @option('--time-limit', '-t', type=int, help='Time limit for each player (seconds).', default=3)
+@option('--verbose', '-v', is_flag=True, help='Verbose for validator.')
 class Gorill:
-	def __init__(self, player1, player2, val, test, time_limit):
+	def __init__(self, player1, player2, val, test, time_limit, verbose):
 		self.field = Field(test)
 		self.popen1 = Popen([os.path.join('.', player1)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
 		self.popen2 = Popen([os.path.join('.', player2)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
-		self.val = Popen([os.path.join('.', val)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
+		self.val = Popen([os.path.join('.', val)] + (['-v'] if verbose else []), universal_newlines=True, stdin=PIPE, stdout=PIPE)
 		self.mainloop()
 
 	def endgame(self, player_id):

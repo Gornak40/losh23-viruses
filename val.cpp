@@ -74,7 +74,7 @@ int hard(int pl) {
 	return (pl_score <= op_score ? pl : 3 - pl);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	cin >> n >> m >> k;
 	lout << n << ' ' << m << endl;
 	for (int x = 0; x < n; ++x) {
@@ -93,12 +93,13 @@ int main() {
 			if (!make_move(pl, x, y)) out(3 - pl);
 		}
 		cout << 0 << endl;
-		/*
-		for (int x = 0; x < n; ++x) {
-			for (int y = 0; y < m; ++y)
-				cerr << A[x][y] << ' ';
+		if (argc >= 2) {
+			for (int x = 0; x < n; ++x) {
+				for (int y = 0; y < m; ++y)
+					cerr << A[x][y] << ' ';
+				cerr << endl;
+			}
 			cerr << endl;
 		}
-		cerr << endl;*/
 	}
 }

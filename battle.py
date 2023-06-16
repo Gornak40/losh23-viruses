@@ -26,8 +26,6 @@ def battle(folder, field, no_compile, time_limit):
 	score = defaultdict(int)
 	for i, player1 in enumerate(names):
 		cprint(f'[running] {player1} #{i}', color='yellow')
-		if 'Егор' not in player1:
-			continue
 		for player2 in names:
 			if player1 == player2:
 				continue

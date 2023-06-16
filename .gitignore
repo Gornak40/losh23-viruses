@@ -2,6 +2,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
+dump/*
+val
+log.txt
+popen1
+popen2
 
 # C extensions
 *.so

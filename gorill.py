@@ -1,9 +1,13 @@
 #!venv/bin/activate
 from subprocess import Popen, PIPE
-from time import sleep
+from time import time
 from click import command, argument, option
 from click.types import Path, File
 import os
+
+
+class TLPopen(Popen):
+	cur_time = 0
 
 
 class Field:
@@ -29,24 +33,35 @@ class Field:
 @argument('player2', type=Path(dir_okay=False, exists=True))
 @argument('val', type=Path(dir_okay=False, exists=True))
 @argument('test', type=File())
-@option('--time-limit', '-t', type=int, help='Time limit for each player (seconds).', default=3)
+@option('--time-limit', '-t', type=int, help='Time limit for each player (seconds).')
 @option('--verbose', '-v', is_flag=True, help='Verbose for validator.')
 class Gorill:
 	def __init__(self, player1, player2, val, test, time_limit, verbose):
 		self.field = Field(test)
-		self.popen1 = Popen([os.path.join('.', player1)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
-		self.popen2 = Popen([os.path.join('.', player2)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
-		self.val = Popen([os.path.join('.', val)] + (['-v'] if verbose else []), universal_newlines=True, stdin=PIPE, stdout=PIPE)
+		self.time_limit = time_limit
+		popen_pref = [] if time_limit is None else ['timeout', str(time_limit * 3)]
+		val_suff =  ['-v'] if verbose else []
+		self.popen1 = TLPopen(popen_pref + [os.path.join('.', player1)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
+		self.popen2 = TLPopen(popen_pref + [os.path.join('.', player2)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
+		self.val = Popen([os.path.join('.', val)] + val_suff, universal_newlines=True, stdin=PIPE, stdout=PIPE)
 		self.mainloop()
 
 	def endgame(self, player_id):
 		print(f'Player {player_id} wins')
 		print('o', file=self.popen1.stdin, flush=True)
 		print('o', file=self.popen2.stdin, flush=True)
+		self.popen1.terminate()
+		self.popen2.terminate()
+		self.val.terminate()
 		exit(0)
 
 	def make_moves(self, popen, player_id):
+		g = time()
 		arr = popen.stdout.readline().strip().split()
+		popen.cur_time += time() - g
+		if self.time_limit is not None and popen.cur_time > self.time_limit:
+			print('TL')
+			self.endgame(3 - player_id)
 	#	print(arr)
 		try:
 			arr = list(map(int, arr))
@@ -61,10 +76,10 @@ class Gorill:
 				self.endgame(status[0])
 			return arr
 		except ValueError:
-			print('biba')
+			print('Super incorrect move (VE)')
 			self.endgame(3 - player_id)
 		except IndexError:
-			print('boba')
+			print('Super incorrect move (IE)')
 			self.endgame(3 - player_id)
 
 	def mainloop(self):

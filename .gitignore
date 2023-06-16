@@ -7,6 +7,9 @@ val
 log.txt
 popen1
 popen2
+solutions/*
+roma
+roma.cpp
 
 # C extensions
 *.so

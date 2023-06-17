@@ -31,14 +31,12 @@ def battle(folder, field, no_compile, time_limit):
 	names = sorted([x for x in os.listdir(folder) if not x.endswith('.cpp')], key=lambda x: x.title().split('_')[1:])
 	score = defaultdict(int)
 	for i, player1 in enumerate(names):
-		if 'Егор' not in player1:
-			continue
 		post(f'[running] {player1} #{i}', field, color='yellow')
 		for player2 in names:
 			if player1 == player2:
 				continue
 			post(f'[fight] {player1} {player2}', field, color='cyan')
-			if os.system(f'python gorill.py {os.path.join(folder, player1)} {os.path.join(folder, player2)} val {field} -t {time_limit}'):
+			if os.system(f'./gorill.py {os.path.join(folder, player1)} {os.path.join(folder, player2)} val {field} -t {time_limit}'):
 				post(f'[fatal error]', field, color='red')
 				exit(0)
 			with open(f'{field}_result.out') as file:

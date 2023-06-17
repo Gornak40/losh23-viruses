@@ -41,7 +41,7 @@ def battle(folder, field, no_compile, time_limit):
 			if os.system(f'python gorill.py {os.path.join(folder, player1)} {os.path.join(folder, player2)} val {field} -t {time_limit}'):
 				post(f'[fatal error]', field, color='red')
 				exit(0)
-			with open('result.out') as file:
+			with open(f'{field}_result.out') as file:
 				if int(file.readline().strip()) == 1:
 					post('Player 1 wins', field)
 					score[player1] += 1

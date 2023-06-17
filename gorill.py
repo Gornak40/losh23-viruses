@@ -1,4 +1,4 @@
-#!venv/bin/activate
+#!venv/bin/python3
 from subprocess import Popen, PIPE
 from time import time
 from click import command, argument, option
@@ -39,6 +39,7 @@ class Gorill:
 	def __init__(self, player1, player2, val, test, time_limit, verbose):
 		self.field = Field(test)
 		self.time_limit = time_limit
+		self.secret_prefix = os.path.basename(test.name)
 		popen_pref = [] if time_limit is None else ['timeout', str(time_limit * 3)]
 		val_suff =  ['-v'] if verbose else []
 		self.popen1 = TLPopen(popen_pref + [os.path.join('.', player1)], universal_newlines=True, stdin=PIPE, stdout=PIPE)
@@ -48,7 +49,7 @@ class Gorill:
 
 	def endgame(self, player_id):
 		print(f'Player {player_id} wins')
-		with open('result.out', 'w') as file:
+		with open(f'{self.secret_prefix}_result.out', 'w') as file:
 			print(player_id, file=file)
 	#	print('o', file=self.popen1.stdin, flush=True)
 	#	print('o', file=self.popen2.stdin, flush=True)

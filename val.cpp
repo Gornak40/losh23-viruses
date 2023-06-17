@@ -9,12 +9,12 @@ const int BAD = -100;
 
 int n, m, k, timer;
 int A[MAXN][MAXM], used[MAXN][MAXN];
-ofstream lout("log.txt", ofstream::out);
+//ofstream lout("log.txt", ofstream::out);
 
 void out(int pl) {
 //	cerr << "SUGOMUS " << pl << endl;
 	cout << pl << endl;
-	lout << -1 << ' ' << -1 << ' ' << -1 << endl;
+//	lout << -1 << ' ' << -1 << ' ' << -1 << endl;
 	exit(0);
 }
 
@@ -42,7 +42,7 @@ bool make_move(int pl, int x, int y) {
 	++timer;
 	if (!dfs(pl, x, y)) return false;
 	A[x][y] = (!c ? pl : -pl);
-	lout << x << ' ' << y << ' ' << A[x][y] << endl;
+//	lout << x << ' ' << y << ' ' << A[x][y] << endl;
 	return true;
 }
 
@@ -76,13 +76,13 @@ int hard(int pl) {
 
 int main(int argc, char* argv[]) {
 	cin >> n >> m >> k;
-	lout << n << ' ' << m << endl;
+//	lout << n << ' ' << m << endl;
 	for (int x = 0; x < n; ++x) {
 		for (int y = 0; y < m; ++y) {
 			cin >> A[x][y];
-			lout << A[x][y] << ' ';
+		//	lout << A[x][y] << ' ';
 		}
-		lout << endl;
+	//	lout << endl;
 	}
 	while (true) {
 		int pl, k; cin >> pl >> k;

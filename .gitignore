@@ -1,8 +1,6 @@
 # Byte-compiled / optimized / DLL files
 results/*
-*.log
 *.out
-*.json
 story.log
 result.out
 __pycache__/
